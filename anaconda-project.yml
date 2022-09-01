@@ -23,11 +23,13 @@ description:
 commands:
   initial_summary:
     notebook: initial_summary.ipynb
-    description: Open the notebook used for creating an initial summary figure of the bias-corrected CORDEX data provided by Stantec
+    description: Open the notebook used for creating an initial summary figure of
+      the bias-corrected CORDEX data provided by Stantec
     env_spec: default
   remote_lab:
     unix: jupyter-lab --no-browser --port=8888
-    description: Run a Jupyter Lab server that can be accessed via port 8887 on a remote machine (e.g. Atlas)
+    description: Run a Jupyter Lab server that can be accessed via port 8887 on a
+      remote machine (e.g. Atlas)
     env_spec: default
 
 variables:
@@ -65,7 +67,9 @@ packages:
 - pandas
 - matplotlib
 - jupyterlab
+- tqdm
 
+- openpyxl
 #
 # In the channels section, list any Conda channel URLs to be searched
 # for packages.
