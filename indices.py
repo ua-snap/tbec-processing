@@ -84,7 +84,7 @@ def hsd(prsn):
     """
     # convert 10cm to native units of prsn files, kg m-2 s-1
     hsd_thr = 10 / 8640
-    return days_with_snow(ds["prsn"], low=f"{hsd_thr} kg m-2 s-1", freq="YS")
+    return days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
 
 
 aggr_func_lu = {
