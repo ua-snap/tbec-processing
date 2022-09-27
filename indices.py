@@ -19,12 +19,6 @@ def take_sorted(arr, axis, idx):
     return np.take(np.sort(arr, axis), idx, axis)
 
 
-# keeping this for now in case we end up adding more indices that aren't defined in xclim
-# def wrap_resample_map(da, func):
-#     """Wrapper for mapping function to grouped dataarray"""
-#     da.resample(time="1Y").map(func)
-
-
 def hd(tasmax):
     """'Hot Day' - the 6th hottest day of the year, over axis called "time"
     
