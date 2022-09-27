@@ -18,16 +18,15 @@ aux_dir = out_dir.joinpath("auxiliary_content")
 aux_dir.mkdir(exist_ok=True)
 
 
-
 # path to dataset of extreme variables calculated on an annal basis
 #  for the entire domain of the CORDEX data.
-extremes_fp = out_dir.joinpath("annual_extremes.nc")
+indices_fp = out_dir.joinpath("annual_indices.nc")
 
-# path to extractions of extreme variables done for the main set of point locations
-extr_era_summary_fp = out_dir.joinpath("extremes_era_extractions.xlsx")
+# path to extractions of indices done for the main set of point locations
+idx_era_summary_fp = out_dir.joinpath("indices_era_extractions.xlsx")
 
-# path to extractions of extreme variables done for the main set of point locations
-extr_decade_summary_fp = out_dir.joinpath("extremes_decadal_extractions.xlsx")
+# path to extractions of indices done for the main set of point locations
+idx_decade_summary_fp = out_dir.joinpath("indices_decadal_extractions.xlsx")
 
 # path to directory that will contain barplots of summaries over decades
 era_summary_dir = out_dir.joinpath("era_summary_charts")
@@ -71,8 +70,8 @@ scenarios = ["hist", "rcp45", "rcp85"]
 # varnames = ["pr", "prsn", "sfcWind", "tas", "tasmax", "tasmin"]
 varnames = ["pr", "prsn", "tasmax", "tasmin"]
 
-# map from varnames to desired summary variables
-aggr_varname_lu = {
+# map from model variable names to possible index variable names
+idx_varname_lu = {
     "pr": ["rx1day"],
     "prsn": ["hsd"],
     "tasmax": ["hd"],

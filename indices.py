@@ -87,6 +87,40 @@ def hsd(prsn):
     return days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
 
 
+def compute_index(da, index, model, scenario):
+    """Summarize a DataArray according to a specified index / aggregation function
+    
+    Args:
+        da (xarray.DataArray): the DataArray object containing the base variable data to b summarized according to aggr
+        index (str): String corresponding to the name of the index to compute
+        scenario (str): scenario being run (for new coordinate dimension)
+        model (str): model being run (for new coordinate dimension)
+            
+    Returns:
+        A new data array with dimensions year, latitude, longitude, in that order containing the summarized information
+    """
+    new_da = (
+        aggr_func_lu[index](da)
+        .transpose("time", "lat", "lon")
+        .reset_coords(["longitude", "latitude", "height"], drop=True)
+    )
+    new_da.name = index
+    
+    # add model and scenario coordinate dimensions to the data array
+    coords_di = {
+        "model": model,
+        "scenario": scenario,
+    }
+
+    new_dims = list(coords_di.keys())
+    new_da = new_da.assign_coords(coords_di).expand_dims(new_dims)
+    # convert the time dimension to integer years instead of CF time objects
+    years = [cftime.year for cftime in new_da.time.values]
+    new_da = new_da.rename({"time": "year"}).assign_coords({"year": years})
+    
+    return new_da
+
+
 aggr_func_lu = {
     "hd": hd,
     "cd": cd,
