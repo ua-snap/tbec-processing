@@ -18,10 +18,7 @@ variables:
     default: "/workspace/Shared/Tech_Projects/TBEC_CMIP5_Processing/final_products"
   }
   SCRATCH_DIR: {description: "Scratch directory for writing temporary files"}
-  CORDEX_DIR: {
-    description: "Directory containing bias-corrected CMIP5 CORDEX data from Stantec",
-    default: "/atlas_scratch/kmredilla/AK_CORDEX"
-  }
+  CORDEX_DIR: {description: "Directory containing bias-corrected CMIP5 CORDEX data from Stantec"}
 
 
 packages:
