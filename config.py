@@ -22,10 +22,18 @@ aux_dir.mkdir(exist_ok=True)
 #  for the entire domain of the CORDEX data.
 indices_fp = out_dir.joinpath("annual_indices.nc")
 
-# path to extractions of indices done for the main set of point locations
+# path to era-based summary extractions of indices done for the main set of point locations
+# CSVs
+idx_era_summary_dir = out_dir.joinpath("era_extractions")
+idx_era_summary_dir.mkdir(exist_ok=True)
+# Excel file
 idx_era_summary_fp = out_dir.joinpath("indices_era_extractions.xlsx")
 
-# path to extractions of indices done for the main set of point locations
+# path to decade-based summary extractions of indices done for the main set of point locations
+# CSVs
+idx_decade_summary_dir = out_dir.joinpath("era_extractions")
+idx_decade_summary_dir.mkdir(exist_ok=True)
+# Excel file
 idx_decade_summary_fp = out_dir.joinpath("indices_decadal_extractions.xlsx")
 
 # path to directory that will contain barplots of summaries over decades
