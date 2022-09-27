@@ -37,7 +37,7 @@ idx_decade_summary_dir.mkdir(exist_ok=True)
 idx_decade_summary_fp = out_dir.joinpath("indices_decadal_extractions.xlsx")
 
 # path to directory that will contain barplots of summaries over decades
-era_summary_dir = out_dir.joinpath("era_summary_charts")
+era_summary_dir = aux_dir.joinpath("era_summary_charts")
 era_summary_dir.mkdir(exist_ok=True)
 
 # path to directory that will contain barplots of summaries over decades
