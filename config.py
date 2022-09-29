@@ -2,13 +2,8 @@
 
 import os
 from pathlib import Path
-import numpy as np
-import pandas as pd
-import xarray as xr
 
 
-scratch_dir = Path(os.getenv("SCRATCH_DIR"))
-base_dir = Path(os.getenv("BASE_DIR"))
 out_dir = Path(os.getenv("OUTPUT_DIR"))
 # path to directory containing CORDEX data
 cordex_dir = Path(os.getenv("CORDEX_DIR"))
