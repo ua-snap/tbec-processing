@@ -12,7 +12,7 @@ This project utilizes `conda` to manage dependencies. To run any part of the pip
 conda env create -f environment.yml
 ```
 
-This will create a conda environment named `tbe-processing`. Activate the environment via 
+This will create a conda environment named `tbec-processing`. Activate the environment via 
 
 ```
 conda activate tbec-processing
@@ -40,7 +40,7 @@ This project involves a fair bit of production of visual products for summarizat
 
 The main pipeline for deriving the dataset of indices exists in the root folder of this project and is controlled with the `process_indices.ipynb` notebook - execute that first and use the `qc.ipynb` notebook to check the quality of that resulting dataset, which will be available at `$OUTPUT_DIR/annual_indices.nc`. 
 
-The various sumarization tasks are carried out using the other notebooks in the root folder:
+The various summarization tasks are carried out using the other notebooks in the root folder:
 
 * `extract_indices.ipynb`: Make point extractions from the annual indices dataset for some points of interest, summarizing to various decadal and 30-year time periods
 * `initial_summary.ipynb`: This notebook derives some summary bar charts using the base data (not the indices dataset)
