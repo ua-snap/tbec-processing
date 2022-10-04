@@ -1,36 +1,47 @@
 # Data Processing codebase for Two Bears Environmental Consulting collaboration
 
-This codebase contains all of the data pipelines for the Two Bears Environmental Consulting (TBEC) collaboration, with which SNAP is responsible for various "processing" tasks (quotes because it's sort of TBD), such as computing summaries of extreme weather events from various datasets.
+This codebase is responsible for all data processing for the Two Bears Environmental Consulting (TBEC) collaboration. SNAP is responsible for deriving some summaries of "extremes" or "indices". To [quote NCAR](https://climatedataguide.ucar.edu/climate-data/overview-climate-indices), "A climate index is a simple diagnostic quantity that is used to characterize an aspect of a geophysical system." These are basically variables that are derived from more traditional geophysical variables (e.g. temperature, precipitation) over some timespan. 
 
-## Running the pipelines in this codebase
+While the term "indices" is probably more common when referring to the types of variables we are working with here, there may still be references to "extremes" throughout the codebase - just treat these as interchangeable.
 
-This codebase is set up to work with [Anaconda Project](https://anaconda-project.readthedocs.io/en/latest/), the conda-based dependency management system.
+## Running the pipeline
 
-To run any of the pipelines here, which are set up as Jupyter notebooks, simply install Anaconda or Miniconda, and install Anaconda Project via `conda install anaconda-project` if you do not have it (it comes with Anaconda v4.3.1 and later by default).
+This project utilizes `conda` to manage dependencies. To run any part of the pipeline, create an environment from the `environment.yml` file via
 
-Once you have Anaconda Project installed, running any of the notebooks with all required dependencies is as simple as:
-
-```sh
-anaconda-project run <command>
+```
+conda env create -f environment.yml
 ```
 
-where `<command>` should be replaced by any of the available commands below. Running this command will ensure that all dependencies are installed. 
+This will create a conda environment named `tbec-processing`. Activate the environment via 
 
-### Environment variables
-
-The environment variables required for this project have the following default values:
-
-```sh
-BASE_DIR=/workspace/Shared/Tech_Projects/TBEC_CMIP5_Processing/project_data
-OUTPUT_DIR=/workspace/Shared/Tech_Projects/TBEC_CMIP5_Processing/final_products
+```
+conda activate tbec-processing
 ```
 
-### Commands
+and then set the environment variables listed below.
 
-Here are the available commands for this project:
+Then, run the pipeline with either `jupyter lab` or `jupyter notebook` to start a Jupyter server, and open / execute the `process_indices.ipynb` notebook to create the annual indices data that all other processing depends on. See the [Structure](#Structure) section below for more information on the functions of each of the notebooks.
 
-- `initial_summary`: notebook that derives a summary figure for the June 2022 progress report, demonstrating SNAP's retrieval and use of the bias-corrected CORDEX data from Stantec.
-- `remote_lab`: This command can be used to start a Jupyter Lab instance with the root directory of the project as the working directory.
+#### Environment variables
 
-Note - if the above commands are run on a remote machine such as Atlas, port-forwarding can be used to access the Jupyter notebook or Lab servers. 
+The following variables need to be set prior to starting a Jupyter instance as directed above. The values used for the "production" data are provided in the `production_env_vars.sh` script for SNAP reference.
 
+`OUTPUT_DIR`
+
+The output directory where final products are placed.
+
+`CORDEX_DIR`
+
+The directory containing bias-corrected CMIP5 CORDEX data from Stantec. If you are working on Atlas and have a copy of this available on scratch space, or if you have the time to copy the data to scratch space for processing, supply that path for increased performance. 
+
+#### Structure
+
+This project involves a fair bit of production of visual products for summarization of the various indices, particularly at key locations. So the first step is to derive the indices from the base data at an annual time scale, and all other summarization/visualization tasks will depend on that dataset. 
+
+The main pipeline for deriving the dataset of indices exists in the root folder of this project and is controlled with the `process_indices.ipynb` notebook - execute that first and use the `qc.ipynb` notebook to check the quality of that resulting dataset, which will be available at `$OUTPUT_DIR/annual_indices.nc`. 
+
+The various summarization tasks are carried out using the other notebooks in the root folder:
+
+* `extract_indices.ipynb`: Make point extractions from the annual indices dataset for some points of interest, summarizing to various decadal and 30-year time periods
+* `initial_summary.ipynb`: This notebook derives some summary bar charts using the base data (not the indices dataset)
+* `location_summary_plots.ipynb`: Make bar charts using the summarized annual indices extracted for the points of interest with the `extract_indices.ipynb` notebook

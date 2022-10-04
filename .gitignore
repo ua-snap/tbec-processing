@@ -1,3 +1,4 @@
 .ipynb_checkpoints/
 .projectignore
 envs/
+**/__pycache__
