@@ -77,8 +77,8 @@ def hsd(prsn):
         Number of heavy snow days for each year
     """
     # convert 10cm to native units of prsn files, kg m-2 s-1
-    hsd_thr = 10 / 8640
-    return xi.days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
+    # hsd_thr = 10 / 8640
+    return xi.days_with_snow(prsn, low="10 cm", freq="YS")
 
 
 def rx5day(pr):
