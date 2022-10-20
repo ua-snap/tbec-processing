@@ -140,6 +140,30 @@ def r10mm(pr):
     return xi.days_over_precip_thresh(pr, thresh=f"10 mm/day", freq="YS")
 
 
+def cwd(pr):
+    """'Consecutive wet days' - number of the most consecutive days with precip > 1 mm
+    
+    Args:
+        pr (xarray.DataArray): daily total precip values
+        
+    Returns:
+        Max number of consecutive wet days for each year
+    """
+    return xi.maximum_consecutive_wet_days(pr, thresh=f"1 mm/day", freq="YS")
+
+
+def cdd(pr):
+    """'Consecutive dry days' - number of the most consecutive days with precip < 1 mm
+    
+    Args:
+        pr (xarray.DataArray): daily total precip values
+        
+    Returns:
+        Max number of consecutive dry days for each year
+    """
+    return xi.maximum_consecutive_dry_days(pr, thresh=f"1 mm/day", freq="YS")
+
+
 def compute_index(da, index, model, scenario):
     """Summarize a DataArray according to a specified index / aggregation function
     
