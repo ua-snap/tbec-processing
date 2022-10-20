@@ -1,8 +1,7 @@
 """This script includes functions that define the various extreme variables we will by deriving"""
 
 import numpy as np
-from xclim.indices import max_n_day_precipitation_amount
-from xclim.indices import days_with_snow
+import xclim.indices as xi
 
 
 def take_sorted(arr, axis, idx):
@@ -26,7 +25,7 @@ def hd(tasmax):
         tasmax (xarray.DataArray): daily maximum temperature values for a year
         
     Returns:
-        Hot Day computed over the "time" dimension
+        Hot Day values for each year
     """
     def func(tasmax):
         time_ax = np.where(np.array(tasmax.dims) == "time")[0][0]
@@ -44,7 +43,7 @@ def cd(tasmin):
         tasmin (xarray.DataArray): daily minimum temperature values
         
     Returns:
-        Cold Day computed over the "time" dimension
+        Cold Day values for each year
     """
     def func(tasmin):
         time_ax = np.where(np.array(tasmin.dims) == "time")[0][0]
@@ -62,9 +61,9 @@ def rx1day(pr):
         pr (xarray.DataArray): daily total precip values
         
     Returns:
-        Max 1-day precip computed over the time dimension
+        Max 1-day precip for each year
     """
-    return max_n_day_precipitation_amount(pr, freq="YS")
+    return xi.max_n_day_precipitation_amount(pr, freq="YS")
     
 
 def hsd(prsn):
@@ -74,11 +73,11 @@ def hsd(prsn):
         prsn (xarray.DataArray): daily total snowfall values
         
     Returns:
-        Number of heavy snow days computed over time dimension
+        Number of heavy snow days for each year
     """
     # convert 10cm to native units of prsn files, kg m-2 s-1
     hsd_thr = 10 / 8640
-    return days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
+    return xi.days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
 
 
 def rx5day(pr):
@@ -88,9 +87,33 @@ def rx5day(pr):
         pr (xarray.DataArray): daily total precip values
         
     Returns:
-        Max 5-day precip computed over the time dimension
+        Max 5-day precip for each year
     """
-    return max_n_day_precipitation_amount(pr, 5, freq="YS")
+    return xi.max_n_day_precipitation_amount(pr, 5, freq="YS")
+
+
+def su(tasmax):
+    """'Summer days' - the number of days with tasmax above 25 C
+    
+    Args:
+        tasmax (xarray.DataArray): daily maximum temperature values for a year
+        
+    Returns:
+        Number of summer days for each year
+    """
+    return xi.tx_days_above(tasmax, 25, freq="YS")
+
+
+def dw(tasmin):
+    """'Deep winter days' - the number of days with tasmin below -30 C
+    
+    Args:
+        tasmin (xarray.DataArray): daily maximum temperature values for a year
+        
+    Returns:
+        Number of deep winter days for each year
+    """
+    return xi.tn_days_below(tasmin, -30, freq="YS")
 
 
 def compute_index(da, index, model, scenario):
