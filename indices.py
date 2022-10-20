@@ -1,7 +1,7 @@
 """This script includes functions that define the various extreme variables we will by deriving"""
 
 import numpy as np
-from xclim.indices import max_1day_precipitation_amount
+from xclim.indices import max_n_day_precipitation_amount
 from xclim.indices import days_with_snow
 
 
@@ -64,7 +64,7 @@ def rx1day(pr):
     Returns:
         Max 1-day precip computed over the time dimension
     """
-    return max_1day_precipitation_amount(pr,  freq="YS")
+    return max_n_day_precipitation_amount(pr, freq="YS")
     
 
 def hsd(prsn):
@@ -79,6 +79,18 @@ def hsd(prsn):
     # convert 10cm to native units of prsn files, kg m-2 s-1
     hsd_thr = 10 / 8640
     return days_with_snow(prsn, low=f"{hsd_thr} kg m-2 s-1", freq="YS")
+
+
+def rx5day(pr):
+    """'Max 5-day precip' - the max 5-day precip value recorded for a year.
+    
+    Args:
+        pr (xarray.DataArray): daily total precip values
+        
+    Returns:
+        Max 5-day precip computed over the time dimension
+    """
+    return max_n_day_precipitation_amount(pr, 5, freq="YS")
 
 
 def compute_index(da, index, model, scenario):
