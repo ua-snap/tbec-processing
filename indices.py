@@ -2,6 +2,7 @@
 
 import numpy as np
 import xclim.indices as xi
+from xclim.core.calendar import percentile_doy
 
 
 def take_sorted(arr, axis, idx):
@@ -116,16 +117,30 @@ def dw(tasmin):
     return xi.tn_days_below(tasmin, thresh="-30 degC", freq="YS")
 
 
-# def wsdi(tas):
-#     """'Warm spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily mean T above 90 th percentile of historical values for the date
+def wsdi(tasmax):
+    """'Warm spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily max T above 90th percentile of historical values for the date
     
-#     Args:
-#         tas (xarray.DataArray): daily mean temperature values for a year
+    Args:
+        tasmax (xarray.DataArray): daily maximum temperature values for a year
         
-#     Returns:
-#         Warms spell duration index for each year
-#     """
-#     return xi
+    Returns:
+        Warm spell duration index for each year
+    """
+    tasmax_per = percentile_doy(tasmax, per=90).sel(percentiles=90)
+    return xi.warm_spell_duration_index(tasmax, tasmax_per, window=6, freq="YS")
+
+
+def csdi(tasmin):
+    """'Cold spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily min T below 10th percentile of historical values for the date
+    
+    Args:
+        tasmin (xarray.DataArray): daily minimum temperature values for a year
+        
+    Returns:
+        Cold spell duration index for each year
+    """
+    tasmin_per = percentile_doy(tasmin, per=10).sel(percentiles=10)
+    return xi.cold_spell_duration_index(tasmin, tasmin_per, window=6, freq="YS")
 
 
 def r10mm(pr):
