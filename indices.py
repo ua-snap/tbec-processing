@@ -101,7 +101,7 @@ def su(tasmax):
     Returns:
         Number of summer days for each year
     """
-    return xi.tx_days_above(tasmax, 25, freq="YS")
+    return xi.tx_days_above(tasmax, "25 degC", freq="YS")
 
 
 def dw(tasmin):
@@ -113,7 +113,31 @@ def dw(tasmin):
     Returns:
         Number of deep winter days for each year
     """
-    return xi.tn_days_below(tasmin, -30, freq="YS")
+    return xi.tn_days_below(tasmin, thresh="-30 degC", freq="YS")
+
+
+# def wsdi(tas):
+#     """'Warm spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily mean T above 90 th percentile of historical values for the date
+    
+#     Args:
+#         tas (xarray.DataArray): daily mean temperature values for a year
+        
+#     Returns:
+#         Warms spell duration index for each year
+#     """
+#     return xi
+
+
+def r10mm(pr):
+    """'Heavy precip days' - number of days in a year with over 10mm of precip
+    
+    Args:
+        pr (xarray.DataArray): daily total precip values
+        
+    Returns:
+        Number of heavy precip days for each year
+    """
+    return xi.days_over_precip_thresh(pr, thresh=f"10 mm/day", freq="YS")
 
 
 def compute_index(da, index, model, scenario):
