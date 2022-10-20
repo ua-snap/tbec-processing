@@ -164,6 +164,18 @@ def cdd(pr):
     return xi.maximum_consecutive_dry_days(pr, thresh=f"1 mm/day", freq="YS")
 
 
+def wndd(pr):
+    """'Consecutive windy days' - number of the most consecutive days with mean wind speed > 10 m/s
+    
+    Args:
+        sfcWind (xarray.DataArray): Daily average near-surface wind speed 
+        
+    Returns:
+        Max number of consecutive windy days for each year
+    """
+    return xi.maximum_consecutive_dry_days(pr, thresh=f"10 m s-1", freq="YS")
+
+
 def compute_index(da, index, model, scenario):
     """Summarize a DataArray according to a specified index / aggregation function
     
