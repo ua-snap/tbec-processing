@@ -96,7 +96,10 @@ def rx1day(pr):
     Returns:
         Max 1-day precip for each year
     """
-    return xci.max_n_day_precipitation_amount(pr, freq="YS")
+    out = xci.max_n_day_precipitation_amount(pr, freq="YS")
+    out.attrs["units"] = "mm"
+    
+    return out
 
 
 def rx5day(pr):
@@ -108,7 +111,10 @@ def rx5day(pr):
     Returns:
         Max 5-day precip for each year
     """
-    return xci.max_n_day_precipitation_amount(pr, 5, freq="YS")
+    out = xci.max_n_day_precipitation_amount(pr, 5, freq="YS")
+    out.attrs["units"] = "mm"
+    
+    return out
 
 
 def su(tasmax):
