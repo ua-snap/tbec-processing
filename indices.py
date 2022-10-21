@@ -1,8 +1,10 @@
 """This script includes functions that define the various extreme variables we will by deriving"""
 
 import numpy as np
-import xclim.indices as xi
+import xclim.indices as xci
 from xclim.core.calendar import percentile_doy
+from xclim.core.units import convert_units_to, to_agg_units
+from xclim.indices.generic import threshold_count
 
 
 def take_sorted(arr, axis, idx):
@@ -20,7 +22,7 @@ def take_sorted(arr, axis, idx):
 
 
 def hd(tasmax):
-    """'Hot Day' - the 6th hottest day of the year, over axis called "time"
+    """'Hot Day' - the 6th hottest day of the year
     
     Args:
         tasmax (xarray.DataArray): daily maximum temperature values for a year
@@ -29,16 +31,20 @@ def hd(tasmax):
         Hot Day values for each year
     """
     def func(tasmax):
-        time_ax = np.where(np.array(tasmax.dims) == "time")[0][0]
+        # time_ax = np.where(np.array(tasmax.dims) == "time")[0][0]
         # np.sort defaults to ascending.. 
         #   hd is simply "6th hottest" day
         return tasmax.reduce(take_sorted, dim="time", idx=-6)
     
-    return tasmax.resample(time="1Y").map(func)
+    # hardcoded unit conversion
+    out = tasmax.resample(time="1Y").map(func) - 273.15
+    out.attrs["units"] = "C"
+    
+    return out
     
 
 def cd(tasmin):
-    """'Cold Day' - the 6th coldest day of the year, over axis called "time"
+    """'Cold Day' - the 6th coldest day of the year
     
     Args:
         tasmin (xarray.DataArray): daily minimum temperature values
@@ -47,13 +53,39 @@ def cd(tasmin):
         Cold Day values for each year
     """
     def func(tasmin):
-        time_ax = np.where(np.array(tasmin.dims) == "time")[0][0]
+        # time_ax = np.where(np.array(tasmin.dims) == "time")[0][0]
         # np.sort defaults to ascending.. 
         #   cd is simply "6th coldest" day
         return tasmin.reduce(take_sorted, dim="time", idx=5)
     
-    return tasmin.resample(time="1Y").map(func)
+    # hardcoded unit conversion
+    out = tasmin.resample(time="1Y").map(func) - 273.15
+    out.attrs["units"] = "C"
+    
+    return out
 
+
+def hsd(prsn):
+    """'Heavy snow days' - the mean snowfall of the 5 snowiest days in a year
+    
+    Args:
+        prsn (xarray.DataArray): daily total snowfall values
+        
+    Returns:
+        The mean snowfall for the 5 snowiest days in a year
+    """
+    def func(prsn):
+        def take_sorted_mean(arr, axis, idx):
+            """Wrapper for take_sorted function to give the mean of the taken values"""
+            return take_sorted(arr, axis, idx).mean(axis=axis)
+        
+        return prsn.reduce(take_sorted_mean, dim="time", idx=np.arange(-5, 0))
+    
+    out = prsn.resample(time="1Y").map(func) * 8640
+    out.attrs["units"] = "cm"
+
+    return out
+    
 
 def rx1day(pr):
     """'Max 1-day precip' - the max daily precip value recorded for a year.
@@ -64,21 +96,7 @@ def rx1day(pr):
     Returns:
         Max 1-day precip for each year
     """
-    return xi.max_n_day_precipitation_amount(pr, freq="YS")
-    
-
-def hsd(prsn):
-    """'Heavy snow days' - number of days in a year with over 10cm of snowfall
-    
-    Args:
-        prsn (xarray.DataArray): daily total snowfall values
-        
-    Returns:
-        Number of heavy snow days for each year
-    """
-    # convert 10cm to native units of prsn files, kg m-2 s-1
-    # hsd_thr = 10 / 8640
-    return xi.days_with_snow(prsn, low="10 cm", freq="YS")
+    return xci.max_n_day_precipitation_amount(pr, freq="YS")
 
 
 def rx5day(pr):
@@ -90,7 +108,7 @@ def rx5day(pr):
     Returns:
         Max 5-day precip for each year
     """
-    return xi.max_n_day_precipitation_amount(pr, 5, freq="YS")
+    return xci.max_n_day_precipitation_amount(pr, 5, freq="YS")
 
 
 def su(tasmax):
@@ -102,7 +120,7 @@ def su(tasmax):
     Returns:
         Number of summer days for each year
     """
-    return xi.tx_days_above(tasmax, "25 degC", freq="YS")
+    return xci.tx_days_above(tasmax, "25 degC", freq="YS")
 
 
 def dw(tasmin):
@@ -114,7 +132,7 @@ def dw(tasmin):
     Returns:
         Number of deep winter days for each year
     """
-    return xi.tn_days_below(tasmin, thresh="-30 degC", freq="YS")
+    return xci.tn_days_below(tasmin, thresh="-30 degC", freq="YS")
 
 
 def wsdi(tasmax):
@@ -127,7 +145,7 @@ def wsdi(tasmax):
         Warm spell duration index for each year
     """
     tasmax_per = percentile_doy(tasmax, per=90).sel(percentiles=90)
-    return xi.warm_spell_duration_index(tasmax, tasmax_per, window=6, freq="YS")
+    return xci.warm_spell_duration_index(tasmax, tasmax_per, window=6, freq="YS")
 
 
 def csdi(tasmin):
@@ -140,7 +158,7 @@ def csdi(tasmin):
         Cold spell duration index for each year
     """
     tasmin_per = percentile_doy(tasmin, per=10).sel(percentiles=10)
-    return xi.cold_spell_duration_index(tasmin, tasmin_per, window=6, freq="YS")
+    return xci.cold_spell_duration_index(tasmin, tasmin_per, window=6, freq="YS")
 
 
 def r10mm(pr):
@@ -152,7 +170,11 @@ def r10mm(pr):
     Returns:
         Number of heavy precip days for each year
     """
-    return xi.days_over_precip_thresh(pr, thresh=f"10 mm/day", freq="YS")
+    # code based on xclim.indices._threshold.tg_days_above
+    thresh = "10 mm/day"
+    thresh = convert_units_to(thresh, pr)
+    f = threshold_count(pr, ">", thresh, freq="YS")
+    return to_agg_units(f, pr, "count")
 
 
 def cwd(pr):
@@ -164,7 +186,7 @@ def cwd(pr):
     Returns:
         Max number of consecutive wet days for each year
     """
-    return xi.maximum_consecutive_wet_days(pr, thresh=f"1 mm/day", freq="YS")
+    return xci.maximum_consecutive_wet_days(pr, thresh=f"1 mm/day", freq="YS")
 
 
 def cdd(pr):
@@ -176,7 +198,7 @@ def cdd(pr):
     Returns:
         Max number of consecutive dry days for each year
     """
-    return xi.maximum_consecutive_dry_days(pr, thresh=f"1 mm/day", freq="YS")
+    return xci.maximum_consecutive_dry_days(pr, thresh=f"1 mm/day", freq="YS")
 
 
 def wndd(pr):
@@ -188,7 +210,7 @@ def wndd(pr):
     Returns:
         Max number of consecutive windy days for each year
     """
-    return xi.maximum_consecutive_dry_days(pr, thresh=f"10 m s-1", freq="YS")
+    return xci.windy_days(pr, thresh=f"10 m s-1", freq="YS")
 
 
 def compute_index(da, index, model, scenario):
@@ -196,7 +218,7 @@ def compute_index(da, index, model, scenario):
     
     Args:
         da (xarray.DataArray): the DataArray object containing the base variable data to b summarized according to aggr
-        index (str): String corresponding to the name of the index to compute
+        index (str): String corresponding to the name of the index to compute (assumes value is equal to the name of the corresponding function)
         scenario (str): scenario being run (for new coordinate dimension)
         model (str): model being run (for new coordinate dimension)
             
@@ -204,7 +226,7 @@ def compute_index(da, index, model, scenario):
         A new data array with dimensions year, latitude, longitude, in that order containing the summarized information
     """
     new_da = (
-        aggr_func_lu[index](da)
+        globals()[index](da)
         .transpose("time", "lat", "lon")
         .reset_coords(["longitude", "latitude", "height"], drop=True)
     )
@@ -223,11 +245,3 @@ def compute_index(da, index, model, scenario):
     new_da = new_da.rename({"time": "year"}).assign_coords({"year": years})
     
     return new_da
-
-
-aggr_func_lu = {
-    "hd": hd,
-    "cd": cd,
-    "rx1day": rx1day,
-    "hsd": hsd,
-}
