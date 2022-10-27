@@ -39,6 +39,7 @@ def hd(tasmax):
     # hardcoded unit conversion
     out = tasmax.resample(time="1Y").map(func) - 273.15
     out.attrs["units"] = "C"
+    out.attrs["comment"] = "'hot day': 6th hottest day of the year"
     
     return out
     
@@ -61,6 +62,7 @@ def cd(tasmin):
     # hardcoded unit conversion
     out = tasmin.resample(time="1Y").map(func) - 273.15
     out.attrs["units"] = "C"
+    out.attrs["comment"] = "'cold day': 6th coldest day of the year"
     
     return out
 
@@ -141,30 +143,32 @@ def dw(tasmin):
     return xci.tn_days_below(tasmin, thresh="-30 degC", freq="YS")
 
 
-def wsdi(tasmax):
+def wsdi(tasmax, hist_da):
     """'Warm spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily max T above 90th percentile of historical values for the date
     
     Args:
-        tasmax (xarray.DataArray): daily maximum temperature values for a year
+        tasmax (xarray.DataArray): daily maximum temperature values
+        hist_da (xarray.DataArray): historical daily maximum temperature values
         
     Returns:
         Warm spell duration index for each year
     """
-    tasmax_per = percentile_doy(tasmax, per=90).sel(percentiles=90)
-    return xci.warm_spell_duration_index(tasmax, tasmax_per, window=6, freq="YS")
+    tasmax_per = percentile_doy(hist_da, per=90).sel(percentiles=90)
+    return xci.warm_spell_duration_index(tasmax, tasmax_per, window=6, freq="YS").drop("percentiles")
 
 
-def csdi(tasmin):
+def csdi(tasmin, hist_da):
     """'Cold spell duration index' - Annual count of occurrences of at least 5 consecutive days with daily min T below 10th percentile of historical values for the date
     
     Args:
         tasmin (xarray.DataArray): daily minimum temperature values for a year
+        hist_da (xarray.DataArray): historical daily minimum temperature values
         
     Returns:
         Cold spell duration index for each year
     """
-    tasmin_per = percentile_doy(tasmin, per=10).sel(percentiles=10)
-    return xci.cold_spell_duration_index(tasmin, tasmin_per, window=6, freq="YS")
+    tasmin_per = percentile_doy(hist_da, per=10).sel(percentiles=10)
+    return xci.cold_spell_duration_index(tasmin, tasmin_per, window=6, freq="YS").drop("percentiles")
 
 
 def r10mm(pr):
@@ -219,7 +223,7 @@ def wndd(pr):
     return xci.windy_days(pr, thresh=f"10 m s-1", freq="YS")
 
 
-def compute_index(da, index, model, scenario):
+def compute_index(da, index, model, scenario, kwargs={}):
     """Summarize a DataArray according to a specified index / aggregation function
     
     Args:
@@ -227,16 +231,28 @@ def compute_index(da, index, model, scenario):
         index (str): String corresponding to the name of the index to compute (assumes value is equal to the name of the corresponding function)
         scenario (str): scenario being run (for new coordinate dimension)
         model (str): model being run (for new coordinate dimension)
+        kwargs (dict): additional arguments for the index function being called
             
     Returns:
         A new data array with dimensions year, latitude, longitude, in that order containing the summarized information
     """
     new_da = (
-        globals()[index](da)
+        globals()[index](da, **kwargs)
         .transpose("time", "lat", "lon")
         .reset_coords(["longitude", "latitude", "height"], drop=True)
     )
-    new_da.name = index
+    new_da.name = index  
+    # get the nodata mask from first time slice
+    nodata = np.broadcast_to(
+        np.isnan(da.sel(time=da["time"].values[0]).transpose("lat", "lon")), 
+        new_da.shape
+    )
+    # remask, because xclim switches nans to 0
+    # xclim is inconsistent about the types returned.
+    if new_da.dtype in [np.int32, np.int64]:
+        new_da.values[nodata] = -9999
+    else:
+        new_da.values[nodata] = np.nan
     
     # add model and scenario coordinate dimensions to the data array
     coords_di = {
