@@ -211,8 +211,8 @@ def cdd(pr):
     return xci.maximum_consecutive_dry_days(pr, thresh=f"1 mm/day", freq="YS")
 
 
-def wndd(pr):
-    """'Consecutive windy days' - number of the most consecutive days with mean wind speed > 10 m/s
+def wndd(sfcWind):
+    """'Windy days' - number of days with mean wind speed > 10 m/s
     
     Args:
         sfcWind (xarray.DataArray): Daily average near-surface wind speed 
@@ -220,7 +220,11 @@ def wndd(pr):
     Returns:
         Max number of consecutive windy days for each year
     """
-    return xci.windy_days(pr, thresh=f"10 m s-1", freq="YS")
+    # code based on xclim.indices._threshold.tg_days_above
+    thresh = "10 m s-1"
+    thresh = convert_units_to(thresh, sfcWind)
+    f = threshold_count(sfcWind, ">", thresh, freq="YS")
+    return to_agg_units(f, sfcWind, "count")
 
 
 def compute_index(da, index, model, scenario, kwargs={}):
