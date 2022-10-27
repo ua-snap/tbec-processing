@@ -1,4 +1,4 @@
-name: tbec-processing2
+name: tbec-processing
 channels:
   - conda-forge
   - defaults
@@ -191,7 +191,7 @@ dependencies:
   - pexpect=4.8.0
   - pickleshare=0.7.5
   - pillow=9.2.0
-  - pint=0.20.1
+  - pint=0.19.2
   - pip=22.3
   - pkgutil-resolve-name=1.3.10
   - ply=3.11
@@ -266,4 +266,3 @@ dependencies:
   - zict=2.2.0
   - zipp=3.10.0
   - zstd=1.5.2
-prefix: /home/UA/kmredilla/miniconda3/envs/tbec-processing2
