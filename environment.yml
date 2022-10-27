@@ -48,6 +48,7 @@ dependencies:
   - defusedxml=0.7.1
   - distributed=2022.10.0
   - entrypoints=0.4
+  - et_xmlfile=1.0.1
   - executing=1.1.1
   - expat=2.5.0
   - fftw=3.3.10
@@ -179,6 +180,7 @@ dependencies:
   - numba=0.56.3
   - numpy=1.23.4
   - openjpeg=2.5.0
+  - openpyxl=3.0.10
   - openssl=1.1.1q
   - packaging=21.3
   - pandas=1.5.1
