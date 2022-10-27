@@ -45,3 +45,15 @@ The various summarization tasks are carried out using the other notebooks in the
 * `extract_indices.ipynb`: Make point extractions from the annual indices dataset for some points of interest, summarizing to various decadal and 30-year time periods
 * `initial_summary.ipynb`: This notebook derives some summary bar charts using the base data (not the indices dataset)
 * `location_summary_plots.ipynb`: Make bar charts using the summarized annual indices extracted for the points of interest with the `extract_indices.ipynb` notebook
+
+#### Syncing with Google Drive
+
+Since this project has external collaborators, syncing the products created here with Google drive is one way to make sharing easier.
+
+The `Projects/TBEC CMIP5 Processing` folder of the SNAP Team shared drive is where this stuff can go. 
+
+If you have `rclone` configured with a mount for your personal drive, and then a shortcut to the SNAP Team drive on your root Drive direcotry, here is an example for syncing files:
+
+```
+rclone sync decadal_summary_charts google-drive:Projects/TBEC\ CMIP5\ Processing/Decadal\ summary\ charts
+```
