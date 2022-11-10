@@ -71,14 +71,15 @@ scenarios = ["hist", "rcp45", "rcp85"]
 
 # not using all available model variables yet
 # varnames = ["pr", "prsn", "sfcWind", "tas", "tasmax", "tasmin"]
-varnames = ["pr", "prsn", "tasmax", "tasmin"]
+varnames = ["pr", "prsn", "sfcWind", "tasmax", "tasmin"]
 
 # map from model variable names to possible index variable names
 idx_varname_lu = {
-    "pr": ["rx1day"],
+    "pr": ["rx1day", "rx5day", "r10mm", "cwd", "cdd"],
     "prsn": ["hsd"],
-    "tasmax": ["hd"],
-    "tasmin": ["cd"],
+    "tasmax": ["hd", "su", "wsdi"],
+    "tasmin": ["cd", "dw", "csdi"],
+    "sfcWind": ["wndd"]
 }
 
 # template filename
