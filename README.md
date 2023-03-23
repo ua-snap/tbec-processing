@@ -55,13 +55,15 @@ The directory containing bias-corrected CMIP5 CORDEX data from Stantec. If you a
 
 This project involves a fair bit of production of visual products for summarization of the various indices, particularly at key locations. So the first step is to derive the indices from the base data at an annual time scale, and all other summarization/visualization tasks will depend on that dataset. 
 
-The main pipeline for deriving the dataset of indices exists in the root folder of this project and is controlled with the `process_indices.ipynb` notebook - execute that first and use the `qc.ipynb` notebook to check the quality of that resulting dataset, which will be available at `$OUTPUT_DIR/annual_indices.nc`. 
+The main pipeline for deriving the dataset of indices exists in the root folder of this project and is controlled with the `process_indices.ipynb` notebook - execute that first. The resulting dataset will be available at `$OUTPUT_DIR/annual_indices.nc`. 
 
 The various summarization tasks are carried out using the other notebooks in the root folder:
 
 * `extract_indices.ipynb`: Make point extractions from the annual indices dataset for some points of interest, summarizing to various decadal and 30-year time periods
 * `initial_summary.ipynb`: This notebook derives some summary bar charts using the base data (not the indices dataset)
 * `location_summary_plots.ipynb`: Make bar charts using the summarized annual indices extracted for the points of interest with the `extract_indices.ipynb` notebook
+
+Use the `qc.ipynb` notebook to check the quality of the dataset and products afterward.
 
 #### Syncing with Google Drive
 
