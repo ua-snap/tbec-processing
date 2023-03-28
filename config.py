@@ -57,7 +57,7 @@ locations = {
     "Port Graham": (59.34, -151.83),
     "Qutekcak (Seward)": (60.10, -149.44),
     "Chenega Bay": (60.06, -148.01),
-    "Tatitek": (60.86, -146.68),
+    "Tatitlek": (60.86, -146.68),
     "Valdez": (61.13, -146.35),
     "Cordova": (60.54, -145.76)
 }
