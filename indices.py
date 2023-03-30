@@ -31,7 +31,6 @@ def hd(tasmax):
         Hot Day values for each year
     """
     def func(tasmax):
-        # time_ax = np.where(np.array(tasmax.dims) == "time")[0][0]
         # np.sort defaults to ascending.. 
         #   hd is simply "6th hottest" day
         return tasmax.reduce(take_sorted, dim="time", idx=-6)

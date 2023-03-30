@@ -41,6 +41,7 @@ decadal_summary_dir.mkdir(exist_ok=True)
 
 # dict of WGS84 coords for each of the locations
 locations = {
+    # original locations
     "Kaktovik": (70.1, -143.6),
     "Stevens Village": (66.1, -149.1),
     "Igiugik Village": (59.3, -155.9),
@@ -50,6 +51,15 @@ locations = {
     "Ketchikan": (55.6, -136.6),
     # "Unalaska": (53.9, -166.5),
     "Aleutians": (57.838, -159.995),
+    
+    # new locations provided on 3/6/23
+    "Nanwalek": (59.31, -157.91),
+    "Port Graham": (59.34, -151.83),
+    "Qutekcak (Seward)": (60.10, -149.44),
+    "Chenega Bay": (60.06, -148.01),
+    "Tatitlek": (60.86, -146.68),
+    "Valdez": (61.13, -146.35),
+    "Cordova": (60.54, -145.76)
 }
 
 # models, scenarios, and base variable names as found in the base CORDEX data
