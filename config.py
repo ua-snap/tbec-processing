@@ -26,10 +26,15 @@ idx_era_summary_fp = out_dir.joinpath("indices_era_extractions.xlsx")
 
 # path to decade-based summary extractions of indices done for the main set of point locations
 # CSVs
-idx_decade_summary_dir = out_dir.joinpath("era_extractions")
+idx_decade_summary_dir = out_dir.joinpath("decadal_extractions")
 idx_decade_summary_dir.mkdir(exist_ok=True)
 # Excel file
 idx_decade_summary_fp = out_dir.joinpath("indices_decadal_extractions.xlsx")
+
+# path to decade-based summary extractions of indices done for the main set of point locations
+# and reshaped to have files by model with worksheets by location
+reshaped_decade_summary_dir = out_dir.joinpath("decadal_extractions_by_model")
+reshaped_decade_summary_dir.mkdir(exist_ok=True)
 
 # path to directory that will contain barplots of summaries over decades
 era_summary_dir = aux_dir.joinpath("era_summary_charts")
