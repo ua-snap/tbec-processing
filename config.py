@@ -44,6 +44,10 @@ era_summary_dir.mkdir(exist_ok=True)
 decadal_summary_dir = aux_dir.joinpath("decadal_summary_charts")
 decadal_summary_dir.mkdir(exist_ok=True)
 
+# path to directory specifically for manuscript
+manuscript_dir = out_dir.joinpath("manuscript_content")
+manuscript_dir.mkdir(exist_ok=True)
+
 # dict of WGS84 coords for each of the locations
 locations = {
     # original locations
